@@ -17,5 +17,6 @@ http_response_code(200);
 // parse event (which is json string) as object
 // Do something - that will not take long - with $event
 $event = json_decode($input);
-
+///do the tranasction update here using the status field of $event
+///this is necessary for requests that were pending
 exit();

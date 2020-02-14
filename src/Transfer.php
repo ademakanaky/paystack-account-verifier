@@ -27,7 +27,6 @@ class Transfer ///implements PaymentsInterface
         $this->account = $accountNo;
         $this->amount = $amount * 100;
         $this->accountName = $accountName;
-        //$this->verifier = new BankAccountVerify;
     }
 
     private function api_secret(){
@@ -112,6 +111,7 @@ class Transfer ///implements PaymentsInterface
        
         if (!is_array($rs)) {
             return "Could not resolve provided details.";
+            exit();
         }
         $code = $rs['code'];
         $validatedAccName = $rs['accname'];
@@ -151,7 +151,7 @@ class Transfer ///implements PaymentsInterface
             return "Transaction not successful. Please try again.";
         }
         //this code should be saved in db for checking status of transaction
-        ///you update logic goes here
+        ///your transaction update logic goes here
         return $paystackTransCode;
     }
 
@@ -181,6 +181,6 @@ class Transfer ///implements PaymentsInterface
         /// status can be any of 'pending', 'success', 'failed' or 'otp'
         $url = $this->fetchTransferStatusEndpoint.$paystackTransCode;
         $status = $this->curl($url, 'GET');
-        return $status->data->status;
+        return $status->data->status;// update transaction status in db
     }
 }
