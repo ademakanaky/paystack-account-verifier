@@ -121,6 +121,9 @@ class Transfer ///implements PaymentsInterface
         $url = $this->recipientCodeEndpoint;
         $recipientCode = $this->curl($url, 'POST', $body);
         ///This code should be stored in the db against the user
+        $sql = "your normal sql insert query here to create a transaction line. The important thing to insert are the transaction details like name, account no, and $code";
+        ///run the sql above
+
         return $recipientCode->data->recipient_code;
     }
 
@@ -140,19 +143,26 @@ class Transfer ///implements PaymentsInterface
 
         //save this $transref in db transactions table alongside other details of the transaction
         $transref = self::genTranxRef();
-        
+        $recipient_code = $this->createRecipient();
+        $sql1 = "UPDATE 'transaction' SET 'transaction_reference' = {$transref} WHERE 'recipient_code' = {$recipient_code}";
+        ///run $sql above
+
         $url = $this->initiateTransferEndpoint;
-        $body = ["source" => "balance", "reason" => "Calm down", "amount" => $this->amount, "recipient" => $this->createRecipient(), "reference" => $transref];
+        $body = ["source" => "balance", "reason" => "Calm down", "amount" => $this->amount, "recipient" => $recipient_code, "reference" => $transref];
 
         $transferResponse = $this->curl($url,'POST', $body);
-        
         $paystackTransCode = $transferResponse->data->transfer_code;
+        $status = $transferResponse->data->status;
+        $transtime = $transferResponse->data->transfer_time;
+
         if (is_null($paystackTransCode) || $paystackTransCode === "") {
             return "Transaction not successful. Please try again.";
         }
         //this code should be saved in db for checking status of transaction
         ///your transaction update logic goes here
-        return $paystackTransCode;
+        $sql2 = "UPDATE 'transaction' SET 'trans_status' = {$status},'transaction_time' = {$transtime} WHERE 'transaction_reference' = {$paystackTransCode}";
+        ///run $sql above
+        return "Transaction has been processed successfully.";
     }
 
     public function canTransfer()
@@ -170,17 +180,14 @@ class Transfer ///implements PaymentsInterface
         return true;
     }
 
-    public function listenForNotification()
-    {
-        // TODO: Implement listenForNotification() method.
-    }
-
     public function fetchTransferStatus(String $paystackTransCode)
     {
         ///use unique transfer code to fetch transaction status
         /// status can be any of 'pending', 'success', 'failed' or 'otp'
         $url = $this->fetchTransferStatusEndpoint.$paystackTransCode;
         $status = $this->curl($url, 'GET');
-        return $status->data->status;// update transaction status in db
+        $status = $status->data->status;// update transaction status in db
+
+
     }
 }
