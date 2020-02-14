@@ -23,10 +23,15 @@ $event = json_decode($input);
 switch($event->event){
     // transfer.success
     case 'transfer.success':
-        // TIP: update transaction detail
+        // TIP: update transaction detail like some
+    	$status = $event->data->status;
+    	$code = $event->data->transfer_code;
+    	$transtime = $event->data->transferred_at;
+    	$sql = "UPDATE 'transaction' SET 'trans_status' = {$status},'transaction_time' = {$transtime} WHERE 'transaction_reference' = {$code}"; //then you run the query. Do not return any response
         break;
     case 'transfer.failed':
     	// TIP: update transaction detail
+    	// same as above
     	break;
 }
 exit();
