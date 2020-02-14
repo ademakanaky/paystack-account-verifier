@@ -182,11 +182,16 @@ class Transfer ///implements PaymentsInterface
 
     public function fetchTransferStatus(String $paystackTransCode)
     {
-        ///use unique transfer code to fetch transaction status
+        ///to check status of transaction
+        /// use unique transfer code to fetch transaction status
         /// status can be any of 'pending', 'success', 'failed' or 'otp'
         /// this function is handy when you have a listing of all your transactions
         /// you can update the status of a pending of a transaction by passing the 
         /// transaction_reference to this method.
+        /// use the response returned transaction_code to fetch transaction status later
+        ///as shown below
+        // $txn->fetchTransferStatus('TRF_1ptvuv321ahaa7q');
+        
         $url = $this->fetchTransferStatusEndpoint.$paystackTransCode;
         $status = $this->curl($url, 'GET');
         $status = $status->data->status;// update transaction status in db
