@@ -2,15 +2,16 @@
 
 namespace UCOM;
 
-class BankAccountVerify{
+class BankAccountVerify
+{
 
     private $apiEndpoint = 'https://api.paystack.co/bank';
 
     public function __construct()
     {
-        $this->accountName = null;
+        //$this->accountName = null;
     }
-    public function api_secret(){
+    private function api_secret(){
         //should fetch from config file
         return 'sk_test_70da1cd7cdbfadd3ca9efdd9c2866e1261bac113';
     }
@@ -51,25 +52,14 @@ class BankAccountVerify{
      * @param $BankName
      */
     public function fetchAccount($BankName, $AccountNo){
-        $Banks = $this->fetchBanks();
-        //die(var_dump($Banks));
-        //exit();
-        foreach ($Banks as $Bank)
-        {
-            if($Bank->name === $BankName)
-            {
-                $BankCode = $Bank->code;
-            }
-        }
+        $BankCode = $this->fetchBankCode($BankName);
         $url = $this->apiEndpoint . '/'. 'resolve?account_number='.$AccountNo.'&bank_code='.$BankCode;
-        //die($url);
-        ///exit();
         $response = $this->curl($url);
         $response =  json_decode($response);
         if(!is_null($response->account_name))
-            echo $response->account_name;
+            return $response->account_name;
         else
-            echo "Could not resolve name. Please try again later.";
+            return "Could not resolve name. Please try again later.";
     }
 
     public function fetchBanks(){
@@ -78,5 +68,20 @@ class BankAccountVerify{
         //$data = is_file('banks.json') ? json_decode(file_get_contents('banks.json')) : null;
         //return $data->data;
         return json_decode($response);
+    }
+
+    public function fetchBankCode($bankname){
+        $code = "No code found";
+        $banks = $this->fetchBanks();
+        foreach($banks as $bank)
+        {
+            if($bank->name === $bankname)
+             {
+                 $code = $bank->code;
+             }
+        }
+
+        return $code;
+
     }
 }
