@@ -19,4 +19,14 @@ http_response_code(200);
 $event = json_decode($input);
 ///do the tranasction update here using the status field of $event
 ///this is necessary for requests that were pending
+///
+switch($event->event){
+    // transfer.success
+    case 'transfer.success':
+        // TIP: update transaction detail
+        break;
+    case 'transfer.failed':
+    	// TIP: update transaction detail
+    	break;
+}
 exit();
