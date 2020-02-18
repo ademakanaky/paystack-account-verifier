@@ -127,7 +127,7 @@ class Transfer ///implements PaymentsInterface
         return $recipientCode->data->recipient_code;
     }
 
-    private function genTranxRef()
+    private function genTranxRef($length)
     {
         //return TransactionRefGen::getHashedToken();
          $token = "";
@@ -154,8 +154,12 @@ class Transfer ///implements PaymentsInterface
 
         //save this $transref in db transactions table alongside other details of the transaction
         //$transref = self::genTranxRef();
-        $transref = $this->genTranxRef();
+        $transref = $this->genTranxRef(19);
         $recipient_code = $this->createRecipient();
+        if ($recipient_code === "Could not resolve provided details.") {
+            
+            return "Account name not correct. Please check and try again";
+        }
         $sql1 = "UPDATE 'transaction' SET 'transaction_reference' = {$transref} WHERE 'recipient_code' = {$recipient_code}";
         ///run $sql above
 
