@@ -129,7 +129,18 @@ class Transfer ///implements PaymentsInterface
 
     private function genTranxRef()
     {
-        return TransactionRefGen::getHashedToken();
+        //return TransactionRefGen::getHashedToken();
+         $token = "";
+         $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+         $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+         $codeAlphabet.= "0123456789";
+         $max = strlen($codeAlphabet);
+    
+        for ($i=0; $i < $length; $i++) {
+            $token .= $codeAlphabet[random_int(0, $max-1)];
+        }
+    
+        return $token;
     }
 
     public function initiateTransfer()
@@ -142,7 +153,8 @@ class Transfer ///implements PaymentsInterface
         }*/
 
         //save this $transref in db transactions table alongside other details of the transaction
-        $transref = self::genTranxRef();
+        //$transref = self::genTranxRef();
+        $transref = $this->genTranxRef();
         $recipient_code = $this->createRecipient();
         $sql1 = "UPDATE 'transaction' SET 'transaction_reference' = {$transref} WHERE 'recipient_code' = {$recipient_code}";
         ///run $sql above
