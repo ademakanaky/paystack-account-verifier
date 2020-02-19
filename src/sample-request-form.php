@@ -141,7 +141,8 @@
 
 
 			<!-- Sign up button -->
-			<button class="btn btn-info my-4 btn-block" type="submit">Request Now</button>
+			<!--<button class="btn btn-info my-4 btn-block" type="submit">Request Now</button>-->
+      <input type="submit" name="submit" value="Request Now" class="btn btn-info my-4 btn-block">
 			<hr>
 
 			<!-- Terms of service -->
